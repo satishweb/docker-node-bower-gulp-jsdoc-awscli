@@ -9,14 +9,7 @@ MAINTAINER Satish Gaikwad <satish@satishweb.com>
 RUN apt-get -y update \
         # Lets install base packages required for awscli
         && apt-get install -y python python-pip ca-certificates \
-        # Lets setup locale for this shell
-        && locale-gen en_US.UTF-8 \
-        && export LC_ALL=en_US.UTF-8 \
-        && export LANG=en_US.UTF-8 \
-        # Lets save locale variables inside /etc/profile for command/shell that run inside container later
-        && echo "export LC_ALL=en_US.UTF-8">>/etc/profile \
-        && echo "export LANG=en_US.UTF-8">>/etc/profile \
-		# Lets install awscli latest version
+        # Lets install awscli latest version
         && pip install awscli \
 		# Lets install bower, gulp and jsdoc
 		npm install -g bower gulp jsdoc \
