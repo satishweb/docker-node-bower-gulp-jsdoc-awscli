@@ -12,7 +12,7 @@ RUN apt-get -y update \
         # Lets install awscli latest version
         && pip install awscli \
 		# Lets install bower, gulp and jsdoc
-		npm install -g bower gulp jsdoc \
+		&& npm install -g bower gulp jsdoc \
         # Remove auto installed unwanted packages post build-essential package bundle removal
         && apt-get -qy autoremove --purge \
         # Removing devel packages, few MBs less :)
