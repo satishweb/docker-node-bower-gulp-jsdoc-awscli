@@ -8,7 +8,7 @@ MAINTAINER Satish Gaikwad <satish@satishweb.com>
 
 RUN apt-get -y update \
 		# Lets install base packages required for awscli
-		&& apt-get install -y python python-pip ca-certificates build-essential curl \
+		&& apt-get install -y python python-pip ca-certificates build-essential curl git \
 		# Lets setup locale for this shell
 		&& locale-gen en_US.UTF-8 \
 		&& export LC_ALL=en_US.UTF-8 \
