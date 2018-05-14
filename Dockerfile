@@ -4,7 +4,7 @@
 # Author: Satish Gaikwad <satish@satishweb.com>
 
 # We will always take latest stable ubuntu docker image as base image
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 MAINTAINER Satish Gaikwad <satish@satishweb.com>
 
 RUN apt-get -y update \
