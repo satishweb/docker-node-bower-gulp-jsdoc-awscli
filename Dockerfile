@@ -3,7 +3,7 @@
 # Author: Satish Gaikwad <satish@satishweb.com>
 
 # We will always take latest stable ubuntu docker image as base image
-FROM ubuntu
+FROM ubuntu:bionic
 MAINTAINER Satish Gaikwad <satish@satishweb.com>
 
 RUN apt-get -y update \
@@ -19,7 +19,7 @@ RUN apt-get -y update \
         # Lets install awscli latest version
         && pip install awscli \
 		# Lets install nodejs
-		&& curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh ; \
+		&& curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh ; \
 		/bin/bash nodesource_setup.sh \
 		&& apt-get -y update && apt-get install -y nodejs \
 		# Lets install bower, gulp and jsdoc
