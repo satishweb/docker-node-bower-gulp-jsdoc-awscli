@@ -1,9 +1,10 @@
 #!/bin/bash
-# Node 6.x.x (boron) + bower + gulp + jsdoc + awscli Docker image
+# Node 8.x.x (carbon) + bower + gulp + jsdoc + awscli Docker image
+# We will always use latest stable Nodejs version!
 # Author: Satish Gaikwad <satish@satishweb.com>
 
 # We will always take latest stable ubuntu docker image as base image
-FROM ubuntu:bionic
+FROM ubuntu:xenial
 MAINTAINER Satish Gaikwad <satish@satishweb.com>
 
 RUN apt-get -y update \
