@@ -9,9 +9,9 @@ MAINTAINER Satish Gaikwad <satish@satishweb.com>
 
 RUN apt-get -y update \
 		# Lets install base packages required for awscli
-		&& apt-get install -y python python-pip ca-certificates build-essential curl git \
+		&& apt-get install -y python python-pip ca-certificates build-essential curl git locales\
 		# Lets setup locale for this shell
-		&& locale-gen en_US.UTF-8 \
+        && locale-gen en_US.UTF-8 \
 		&& export LC_ALL=en_US.UTF-8 \
 		&& export LANG=en_US.UTF-8 \
 		# Lets save locale variables inside /etc/profile for command/shell that run inside container later
@@ -20,9 +20,9 @@ RUN apt-get -y update \
         # Lets install awscli latest version
         && pip install awscli \
 		# Lets install nodejs
-		&& curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh ; \
+        && curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh ; \
 		/bin/bash nodesource_setup.sh \
-		&& apt-get -y update && apt-get install -y nodejs \
+        && apt-get -y update && apt-get install -y nodejs \
 		# Lets install bower, gulp and jsdoc
 		&& npm install -g bower gulp jsdoc \
         # Remove auto installed unwanted packages post build-essential package bundle removal
