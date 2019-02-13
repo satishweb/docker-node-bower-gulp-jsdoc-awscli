@@ -1,5 +1,6 @@
 #!/bin/bash
-# Node 10.x.x + bower + gulp + jsdoc + awscli Docker image
+# Node 8.x.x (carbon) + bower + gulp + jsdoc + awscli Docker image
+# We will always use latest stable Nodejs version!
 # Author: Satish Gaikwad <satish@satishweb.com>
 
 # We will always take latest stable ubuntu docker image as base image
@@ -19,7 +20,7 @@ RUN apt-get -y update \
         # Lets install awscli latest version
         && pip install awscli \
 		# Lets install nodejs
-        && curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh ; \
+        && curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh ; \
 		/bin/bash nodesource_setup.sh \
         && apt-get -y update && apt-get install -y nodejs \
 		# Lets install bower, gulp and jsdoc
