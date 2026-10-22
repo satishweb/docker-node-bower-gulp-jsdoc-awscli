@@ -1,58 +1,57 @@
-#!/bin/bash
-# Node 10.x.x + bower + gulp + jsdoc + awscli Docker image
 # Author: Satish Gaikwad <satish@satishweb.com>
+# Node with bower, gulp, jsdoc and the command of aws.
+#
+# The version of node is given with the argument NODE_MAJOR, the images for
+# the versions of node that have support are made with it.
+FROM ubuntu:24.04
+LABEL maintainer="Satish Gaikwad <satish@satishweb.com>"
 
-# We will always take latest stable ubuntu docker image as base image
-FROM ubuntu:bionic
-MAINTAINER Satish Gaikwad <satish@satishweb.com>
+ARG NODE_MAJOR=22
+ARG BOWER_VERSION=1.8.14
+ARG GULP_VERSION=5.0.1
+ARG JSDOC_VERSION=4.0.4
+ARG AWSCLI_VERSION=1.46.2
 
-RUN apt-get -y update \
-		# Lets install base packages required for awscli
-		&& apt-get install -y python python-pip ca-certificates build-essential curl git locales\
-		# Lets setup locale for this shell
-        && locale-gen en_US.UTF-8 \
-		&& export LC_ALL=en_US.UTF-8 \
-		&& export LANG=en_US.UTF-8 \
-		# Lets save locale variables inside /etc/profile for command/shell that run inside container later
-		&& echo "export LC_ALL=en_US.UTF-8">>/etc/profile \
-		&& echo "export LANG=en_US.UTF-8">>/etc/profile \
-        # Lets install awscli latest version
-        && pip install awscli \
-		# Lets install nodejs
-        && curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh ; \
-		/bin/bash nodesource_setup.sh \
-        && apt-get -y update && apt-get install -y nodejs \
-		# Lets install bower, gulp and jsdoc
-		&& npm install -g bower gulp jsdoc \
-        # Remove auto installed unwanted packages post build-essential package bundle removal
-        && apt-get -qy autoremove --purge \
-        # Removing devel packages, few MBs less :)
-        # Lets remove all downloaded packages from cache. This reduces image size significantly.
-        # Note: Docker should remove it on its own however no harm having this command here
-        && rm -rf /var/cache/apt/archives/*deb \
-        # Lets create the entrypoint script to handle switch between invoking of default bash shell and aws command execution.
-        # We will launch bash shell if there is/are no input parameter(s)/command given to docker run command
-        # We will run aws command by default if CMD is not called by docker run command.
-        && echo '#!/bin/bash'>/opt/entrypoint.sh \
-        && echo 'set -e && exec "$@"' >>/opt/entrypoint.sh \
-        # Lets make entrypoint script executable
-        && chmod +x /opt/entrypoint.sh
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    NPM_CONFIG_PREFIX=/home/ubuntu/.npm-global \
+    PATH=/home/ubuntu/.npm-global/bin:$PATH
 
-# This command had to be separate since docker build has problem with dpkg --force-depends command for determining exit status check.
-RUN cd /tmp; \
-        # awscli help pages use groff command for printing on screen.
-        # Installing groff with apt-get installs way too many unwanted packages making image size bigger
-        # Installing groff manually with only required libs will keep image size reasonable
-        apt-get download groff groff-base && dpkg --force-depends -i *.deb ; rm -rf /tmp/*deb ;\
-        # Install missing dependancies for existing packages.
-	    apt-get -f install ; \
-	    # Install ssh commands.
-	    apt-get install sshcommand ; \
-        # Docker build command fails due to dpkg dependancy errors, we need to ignore errors here hence we exit with code 0 to let docker think this RUN was successful.
-        exit 0
+# The packages of the image and the node from the repository of the project
+# node. The versions of the programs are fixed, the image is the same with
+# every build.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    curl \
+    git \
+    gnupg \
+    groff-base \
+    locales \
+    python3 \
+    python3-pip \
+    python3-venv \
+    && locale-gen en_US.UTF-8 \
+    && curl -fsSL "https://deb.nodesource.com/setup_${NODE_MAJOR}.x" | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g "bower@${BOWER_VERSION}" "gulp@${GULP_VERSION}" "jsdoc@${JSDOC_VERSION}" \
+    && python3 -m venv /opt/aws-cli \
+    && /opt/aws-cli/bin/pip install --no-cache-dir "awscli==${AWSCLI_VERSION}" \
+    && ln -s /opt/aws-cli/bin/aws /usr/local/bin/aws \
+    && rm -rf /var/lib/apt/lists/*
 
-# Lets define entrypoint to execute the entrypoint script.
+# The programs of node are installed in the home of the user, so the user can
+# add more of them.
+RUN mkdir -p /home/ubuntu/.npm-global \
+    && chown -R ubuntu:ubuntu /home/ubuntu
+
+# The container runs with the user of the base image.
+USER ubuntu
+WORKDIR /home/ubuntu
+
+COPY --chmod=0755 entrypoint.sh /opt/entrypoint.sh
+
+# The entrypoint runs the command that is given to the container.
 ENTRYPOINT ["/opt/entrypoint.sh"]
-
-# Default argument to pass to entrypoint if docker run command do not pass any arguments.
 CMD ["/bin/bash"]
