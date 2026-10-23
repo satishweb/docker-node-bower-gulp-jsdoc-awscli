@@ -192,7 +192,7 @@ jobs:
             NODE_MAJOR=${{ steps.release.outputs.version }}
           push: ${{ !inputs.dry_run }}
           tags: ${{ steps.release.outputs.tags }}
-          provenance: true
+          provenance: false
           labels: |
             org.opencontainers.image.title=Node with bower, gulp, jsdoc and the command of aws
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
