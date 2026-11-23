@@ -3,14 +3,14 @@
 #
 # The version of node is given with the argument NODE_MAJOR, the images for
 # the versions of node that have support are made with it.
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 LABEL maintainer="Satish Gaikwad <satish@satishweb.com>"
 
 ARG NODE_MAJOR=26
 ARG BOWER_VERSION=1.8.14
 ARG GULP_VERSION=5.0.1
 ARG JSDOC_VERSION=4.0.5
-ARG AWSCLI_VERSION=1.46.2
+ARG AWSCLI_VERSION=1.46.3
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=en_US.UTF-8 \
